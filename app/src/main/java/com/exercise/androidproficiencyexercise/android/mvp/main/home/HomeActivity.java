@@ -1,8 +1,6 @@
 package com.exercise.androidproficiencyexercise.android.mvp.main.home;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +26,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observable;
 
 /**
  * Created by Akash on 20-05-2018.
