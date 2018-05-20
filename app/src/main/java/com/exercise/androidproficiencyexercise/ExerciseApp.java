@@ -7,6 +7,7 @@ import com.exercise.androidproficiencyexercise.android.di.component.DaggerAppCom
 import com.exercise.androidproficiencyexercise.android.di.module.ApiModule;
 import com.exercise.androidproficiencyexercise.android.di.module.AppModule;
 import com.exercise.androidproficiencyexercise.android.di.module.DataModule;
+import com.exercise.androidproficiencyexercise.android.utils.NetworkChangeReceiver;
 import com.exercise.androidproficiencyexercise.android.utils.Urls;
 
 import timber.log.Timber;
@@ -20,11 +21,11 @@ public class ExerciseApp extends MultiDexApplication {
     private AppComponent appComponent;
     private String baseUrl = Urls.BASEURL;
 
-
+    private static ExerciseApp mInstance;
     @Override
     public void onCreate() {
         super.onCreate();
-
+        mInstance = this;
         appComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(this))
                 .apiModule(new ApiModule(baseUrl))
@@ -46,5 +47,13 @@ public class ExerciseApp extends MultiDexApplication {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public static synchronized ExerciseApp getInstance() {
+        return mInstance;
+    }
+
+    public void setConnectivityListener(NetworkChangeReceiver.ConnectivityReceiverListener listener) {
+        NetworkChangeReceiver.connectivityReceiverListener = listener;
     }
 }

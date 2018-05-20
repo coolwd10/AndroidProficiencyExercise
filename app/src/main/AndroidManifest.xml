@@ -3,7 +3,7 @@
     package="com.exercise.androidproficiencyexercise">
 
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
         android:name=".ExerciseApp"
         android:icon="@mipmap/ic_launcher"
@@ -17,8 +17,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".android.mvp.main.home.HomeActivity"
+        <activity android:name=".android.mvp.main.home.HomeActivity" android:launchMode="singleTop"
             android:theme="@style/AppTheme.Activity"></activity>
+
+        <receiver
+            android:name=".android.utils.NetworkChangeReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

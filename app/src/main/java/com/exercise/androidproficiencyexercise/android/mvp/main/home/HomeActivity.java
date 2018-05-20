@@ -1,6 +1,8 @@
 package com.exercise.androidproficiencyexercise.android.mvp.main.home;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,9 +15,11 @@ import com.exercise.androidproficiencyexercise.ExerciseApp;
 import com.exercise.androidproficiencyexercise.R;
 import com.exercise.androidproficiencyexercise.android.mvp.core.base.BaseActivity;
 import com.exercise.androidproficiencyexercise.android.mvp.main.home.mvp.HomePresenter;
+import com.exercise.androidproficiencyexercise.android.mvp.main.home.mvp.HomeViewModel;
 import com.exercise.androidproficiencyexercise.android.mvp.main.home.mvp.IHomeView;
 import com.exercise.androidproficiencyexercise.android.mvp.main.home.mvp.ListAdapter;
 import com.exercise.androidproficiencyexercise.android.utils.DialogManager;
+import com.exercise.androidproficiencyexercise.android.utils.NetworkChangeReceiver;
 import com.exercise.androidproficiencyexercise.android.utils.Utility;
 import com.exercise.androidproficiencyexercise.data.ListResponse;
 
@@ -31,10 +35,12 @@ import rx.Observable;
  */
 
 public class HomeActivity extends BaseActivity implements IHomeView,
-        DialogManager.NoticeDialogListener{
+        DialogManager.NoticeDialogListener, NetworkChangeReceiver.ConnectivityReceiverListener {
 
     @Inject
     HomePresenter mHomePresenter;
+
+    boolean isConnected;
 
     private DialogManager mDialogManager;
 
@@ -53,6 +59,7 @@ public class HomeActivity extends BaseActivity implements IHomeView,
 
     private boolean mIsRefreshBtnClicked;
 
+    HomeViewModel homeViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,13 +69,21 @@ public class HomeActivity extends BaseActivity implements IHomeView,
         mDialogManager = new DialogManager(this);
         mHomePresenter.attachScreen(this);
 
-//        mViewModel = ViewModelProviders.of(this).get(MyViewModel.class);
-//        if (mViewModel.response != null) {
-//            showFeedData();
-//        } else {
+        homeViewModel = ViewModelProviders.of(this)
+                .get(HomeViewModel.class);
+        if (homeViewModel.getResponse() == null) {
             mHomePresenter.fetchListFromServer();
-        //}
+        } else {
+            showListData(homeViewModel.getResponse());
+        }
+
+
+//        // register connection status listener
+//        ExerciseApp.getInstance().setConnectivityListener(this);
+//        // Manually checking internet connection
+        checkConnection();
     }
+
 
     @Override
     public int layoutId() {
@@ -82,6 +97,11 @@ public class HomeActivity extends BaseActivity implements IHomeView,
         }else {
             Utility.showProgressDialog(this, getResources().getString(R.string.please_wait), true);
         }
+    }
+
+    // Method to manually check connection status
+    private void checkConnection() {
+        isConnected = NetworkChangeReceiver.isConnected();
     }
 
     @Override
@@ -111,14 +131,13 @@ public class HomeActivity extends BaseActivity implements IHomeView,
     private ListAdapter adapter;
 
 
-//    private void showFeedData() {
-//        showListData(mViewModel.response);
-//    }
-
     @Override
     public void showListData(ListResponse response) {
         mIsRefreshBtnClicked =  false;
         mError.setVisibility(View.GONE);
+
+        homeViewModel.setResponse(response);
+
         mHeader.setText(response.getTitle());
         if (adapter != null) {
             adapter.refreshView(response.getRows());
@@ -158,5 +177,13 @@ public class HomeActivity extends BaseActivity implements IHomeView,
     @Override
     public void onDialogNeutralClick(int dialogId) {
 
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        hideProgress();
+        if (isConnected && adapter == null && mInfoListRecyclerView.getVisibility() == View.GONE) {
+            mHomePresenter.fetchListFromServer();
+        }
     }
 }

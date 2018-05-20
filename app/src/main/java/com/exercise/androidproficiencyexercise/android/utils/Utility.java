@@ -10,13 +10,12 @@ import android.content.res.Resources;
 import com.exercise.androidproficiencyexercise.R;
 
 /**
- * Created by ashah on 16/01/17.
+ * Created by ashah on 20/05/18.
  */
 
 public class Utility {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9999;
-
     private static ProgressDialog mProgressDialog;
     public static boolean IsConnected = false;
 
@@ -80,5 +79,9 @@ public class Utility {
             FragmentManager fragmentManager = activity.getFragmentManager();
             dialogViewFragment.show(fragmentManager, "Dialog Fragment");
         }
+    }
+
+    public static void updateAppNetworkSettings(boolean isConnected) {
+        IsConnected = isConnected;
     }
 }
