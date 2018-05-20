@@ -41,7 +41,6 @@ public class HomePresenter extends BasePresenter {
 
     public void fetchListFromServer() {
         mHomeView.showProgress();
-
         final Observable<ListResponse> response = mIHomeUseCase.fetchListDetails();
         response.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<ListResponse>() {
 

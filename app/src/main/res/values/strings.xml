@@ -2,6 +2,7 @@
     <string name="app_name">AndroidProficiencyExercise</string>
     <string name="progress_dialog_message">Please wait...</string>
     <string name="please_wait">Please wait fetching data...</string>
+    <string name="refresh_msg">Please wait refreshing data...</string>
     <string name="warning">Warning</string>
     <string name="cancel">Cancel</string>
     <string name="neutral">NEUTRAL</string>
