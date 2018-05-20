@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">AndroidProficiencyExercise</string>
+    <string name="progress_dialog_message">Please wait...</string>
+    <string name="please_wait">Please wait fetching data...</string>
+    <string name="warning">Warning</string>
+    <string name="cancel">Cancel</string>
+    <string name="neutral">NEUTRAL</string>
+    <string name="dismiss">DISMISS</string>
+    <string name="global_OK_label">OK</string>
+    <string name="global_CANCEL_label">CANCEL</string>
+
+    <string name="global_ERROR_msg">Error Occurred!!! \nPlease try again.</string>
+
 </resources>
