@@ -13,6 +13,8 @@
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:text="Android Proficiency Exercise." />
 
 </RelativeLayout>

@@ -3,7 +3,8 @@
     package="com.exercise.androidproficiencyexercise">
 
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".ExerciseApp"
         android:icon="@mipmap/ic_launcher"
@@ -11,13 +12,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".android.mvp.main.Splash.SplashScreenActivity">
+        <activity
+            android:name=".android.mvp.main.Splash.SplashScreenActivity"
+            android:theme="@style/AppTheme.Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".android.mvp.main.home.HomeActivity" android:launchMode="singleTop"
+        <activity
+            android:name=".android.mvp.main.home.HomeActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.Activity"></activity>
 
         <receiver
