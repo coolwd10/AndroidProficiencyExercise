@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.exercise.androidproficiencyexercise.R;
+import com.exercise.androidproficiencyexercise.data.ListResponse;
+import com.google.gson.Gson;
 
 /**
  * Created by ashah on 20/05/18.
@@ -18,7 +20,7 @@ public class Utility {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9999;
     private static ProgressDialog mProgressDialog;
     public static boolean IsConnected = false;
-
+    public static Gson gson = new Gson();
 
     public static void showProgressDialog(Context activity, String message, boolean cancelable) {
         try {
@@ -83,5 +85,25 @@ public class Utility {
 
     public static void updateAppNetworkSettings(boolean isConnected) {
         IsConnected = isConnected;
+    }
+
+    public static void writeDataToFile(Object inputObject, Context context) {
+        String list_json = gson.toJson(inputObject);
+        try {
+            WriteObjectFile.writeObject(list_json, Constant.RES_FILE_NAME, context);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static Object readData(Context context) {
+        ListResponse response = null;
+        String list_json = (String) WriteObjectFile.readObject(Constant.RES_FILE_NAME,context);
+        try {
+            response = gson.fromJson(list_json, ListResponse.class);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
     }
 }
