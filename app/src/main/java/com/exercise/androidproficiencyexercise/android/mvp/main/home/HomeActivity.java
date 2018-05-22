@@ -70,6 +70,7 @@ public class HomeActivity extends BaseActivity implements IHomeView,
             @Override
             public void onRefresh() {
                 if (NetworkChangeReceiver.isConnected()) {
+                    mIsRefreshBtnClicked = true;
                     mHomePresenter.fetchListFromServer();
                 } else {
                     cancelSwipeRefreshLayout();
@@ -77,6 +78,7 @@ public class HomeActivity extends BaseActivity implements IHomeView,
             }
         });
     }
+
 
     private void initView() {
         homeViewModel = ViewModelProviders.of(this)
@@ -117,7 +119,7 @@ public class HomeActivity extends BaseActivity implements IHomeView,
 
     @Override
     public void showNetworkError() {
-        Utility.showNoNetworkOrServerErrorDialog(this);
+        //Utility.showNoNetworkOrServerErrorDialog(this);
     }
 
     @Override
@@ -127,11 +129,16 @@ public class HomeActivity extends BaseActivity implements IHomeView,
 
     @Override
     public void onErrorOccured(String msg) {
-//        mDialogManager.
-//                showDialog(HomeActivity.this, msg
-//                        , DialogManager.DIALOGTYPE.DIALOG, 1002,
-//                        DialogManager.MSGTYPE.INFO, "", getResources().getString(R.string.global_OK_label)
-//                        , null, null);
+        ListResponse listResponse = readOfflineData();
+        if (listResponse != null) {
+            showListData(listResponse);
+        } else {
+            mDialogManager.
+                    showDialog(HomeActivity.this, msg
+                            , DialogManager.DIALOGTYPE.DIALOG, 1002,
+                            DialogManager.MSGTYPE.INFO, "", getResources().getString(R.string.global_OK_label)
+                            , null, null);
+        }
     }
 
     private ListAdapter adapter;
@@ -191,7 +198,7 @@ public class HomeActivity extends BaseActivity implements IHomeView,
 
     @Override
     public void onDialogPositiveClick(int dialogId) {
-        mError.setVisibility(View.VISIBLE);
+        finish();
     }
 
     @Override

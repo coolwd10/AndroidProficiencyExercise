@@ -56,7 +56,7 @@ public class HomePresenter extends BasePresenter {
                 } else {
                     if(isScreenAttached()){
                         mHomeView.hideProgress();
-                        mHomeView.onErrorOccured("res error");
+                        mHomeView.onErrorOccured("Error in responce.Please try after some time.");
                     }
                 }
             }
