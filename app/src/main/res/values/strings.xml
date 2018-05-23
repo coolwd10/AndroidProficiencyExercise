@@ -11,5 +11,6 @@
     <string name="global_CANCEL_label">CANCEL</string>
 
     <string name="global_ERROR_msg">Error Occurred!!! \nPlease try again.</string>
+    <string name="msg_network_error">No network. Please check the network connection.</string>
 
 </resources>

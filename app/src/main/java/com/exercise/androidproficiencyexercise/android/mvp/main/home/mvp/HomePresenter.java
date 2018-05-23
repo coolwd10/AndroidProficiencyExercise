@@ -1,6 +1,7 @@
 package com.exercise.androidproficiencyexercise.android.mvp.main.home.mvp;
 
 import com.exercise.androidproficiencyexercise.android.mvp.core.base.BasePresenter;
+import com.exercise.androidproficiencyexercise.android.utils.NetworkChangeReceiver;
 import com.exercise.androidproficiencyexercise.data.ListResponse;
 import com.exercise.androidproficiencyexercise.data.source.FeedDataSource;
 import com.exercise.androidproficiencyexercise.domain.HomeUseCaseController;
@@ -34,6 +35,11 @@ public class HomePresenter extends BasePresenter {
         this.mHomeView = view;
     }
     public void fetchListFromServer() {
+        if(!NetworkChangeReceiver.isConnected())
+        {
+            mHomeView.showNetworkError();
+            return;
+        }
         mHomeView.showProgress();
         final Observable<ListResponse> response = mIHomeUseCase.fetchListDetails();
         response.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<ListResponse>() {
@@ -45,7 +51,7 @@ public class HomePresenter extends BasePresenter {
             @Override
             public void onError(Throwable e) {
                 mHomeView.hideProgress();
-                mHomeView.onErrorOccured(e.getMessage());
+                mHomeView.onErrorOccured("Error in responce.Please try after some time.");
             }
 
             @Override

@@ -11,8 +11,6 @@ import rx.Observable;
 
 public interface IHomeView extends BaseScreen {
 
-    void onSuccess();
-
     void onErrorOccured(String msg);
 
     void showListData(ListResponse response);

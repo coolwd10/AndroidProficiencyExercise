@@ -33,10 +33,12 @@ import butterknife.ButterKnife;
 public class HomeActivity extends BaseActivity implements IHomeView,
         DialogManager.NoticeDialogListener, NetworkChangeReceiver.ConnectivityReceiverListener {
 
+    private static final int DIALOG_ID_NO_NETWORK = 1003;
+    private static final int DIALOG_ID_SERVER_ERROR = 1002;
     @Inject
     HomePresenter mHomePresenter;
 
-    boolean isConnected;
+    static boolean isErrorMsgDisplay;
 
     private DialogManager mDialogManager;
 
@@ -69,33 +71,45 @@ public class HomeActivity extends BaseActivity implements IHomeView,
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (NetworkChangeReceiver.isConnected()) {
-                    mIsRefreshBtnClicked = true;
-                    mHomePresenter.fetchListFromServer();
-                } else {
-                    cancelSwipeRefreshLayout();
-                }
+//                if (NetworkChangeReceiver.isConnected()) {
+//                    mIsRefreshBtnClicked = true;
+//                    mHomePresenter.fetchListFromServer();
+//                } else {
+//                    cancelSwipeRefreshLayout();
+//                }
+                mIsRefreshBtnClicked = true;
+                mHomePresenter.fetchListFromServer();
             }
         });
     }
 
 
+//    private void initView() {
+//        homeViewModel = ViewModelProviders.of(this)
+//                .get(HomeViewModel.class);
+//        if(!NetworkChangeReceiver.isConnected()) {
+//            ListResponse listResponse = readOfflineData();
+//            if (listResponse != null) {
+//                showListData(listResponse);
+//            } else {
+//                mError.setVisibility(View.VISIBLE);
+//            }
+//        } else {
+//            if (homeViewModel.getResponse() == null) {
+//                mHomePresenter.fetchListFromServer();
+//            } else {
+//                showListData(homeViewModel.getResponse());
+//            }
+//        }
+//    }
+
     private void initView() {
         homeViewModel = ViewModelProviders.of(this)
                 .get(HomeViewModel.class);
-        if(!NetworkChangeReceiver.isConnected()) {
-            ListResponse listResponse = readOfflineData();
-            if (listResponse != null) {
-                showListData(listResponse);
-            } else {
-                mError.setVisibility(View.VISIBLE);
-            }
+        if (homeViewModel.getResponse() == null) {
+            mHomePresenter.fetchListFromServer();
         } else {
-            if (homeViewModel.getResponse() == null) {
-                mHomePresenter.fetchListFromServer();
-            } else {
-                showListData(homeViewModel.getResponse());
-            }
+            showListData(homeViewModel.getResponse());
         }
     }
 
@@ -119,14 +133,24 @@ public class HomeActivity extends BaseActivity implements IHomeView,
 
     @Override
     public void showNetworkError() {
-        //Utility.showNoNetworkOrServerErrorDialog(this);
+        showCacheData();
+        if (isErrorMsgDisplay) {
+            mError.setVisibility(View.VISIBLE);
+        } else {
+            mDialogManager.
+                    showDialog(HomeActivity.this, getResources().getString(R.string.msg_network_error)
+                            , DialogManager.DIALOGTYPE.DIALOG, DIALOG_ID_NO_NETWORK,
+                            DialogManager.MSGTYPE.INFO, "", getResources().getString(R.string.global_OK_label)
+                            , null, null);
+        }
     }
 
-    @Override
-    public void onSuccess() {
-
+    private void showCacheData() {
+        ListResponse listResponse = readOfflineData();
+        if (listResponse != null) {
+            showListData(listResponse);
+        }
     }
-
     @Override
     public void onErrorOccured(String msg) {
         ListResponse listResponse = readOfflineData();
@@ -135,7 +159,7 @@ public class HomeActivity extends BaseActivity implements IHomeView,
         } else {
             mDialogManager.
                     showDialog(HomeActivity.this, msg
-                            , DialogManager.DIALOGTYPE.DIALOG, 1002,
+                            , DialogManager.DIALOGTYPE.DIALOG, DIALOG_ID_SERVER_ERROR,
                             DialogManager.MSGTYPE.INFO, "", getResources().getString(R.string.global_OK_label)
                             , null, null);
         }
@@ -146,8 +170,8 @@ public class HomeActivity extends BaseActivity implements IHomeView,
 
     @Override
     public void showListData(ListResponse response) {
-        mIsRefreshBtnClicked =  false;
-
+        mIsRefreshBtnClicked = false;
+        isErrorMsgDisplay = false;
         cancelSwipeRefreshLayout();
 
         mError.setVisibility(View.GONE);
@@ -175,11 +199,7 @@ public class HomeActivity extends BaseActivity implements IHomeView,
         // cancel the Visual indication of a refresh
         swipeRefreshLayout.setRefreshing(false);
     }
-//    @OnClick (R.id.btn_refresh)
-//    public void onRefreshBtnClicked() {
-//        mIsRefreshBtnClicked =  true;
-//        mHomePresenter.fetchListFromServer();
-//    }
+
 
 
     private void cacheData(ListResponse response) {
@@ -198,7 +218,20 @@ public class HomeActivity extends BaseActivity implements IHomeView,
 
     @Override
     public void onDialogPositiveClick(int dialogId) {
-        finish();
+        switch (dialogId) {
+            case DIALOG_ID_NO_NETWORK: {
+                isErrorMsgDisplay = true;
+                ListResponse listResponse = readOfflineData();
+                if (homeViewModel.getResponse() == null
+                        && listResponse == null) {
+                    mError.setVisibility(View.VISIBLE);
+                }
+            }
+                break;
+            case DIALOG_ID_SERVER_ERROR:
+                finish();
+                break;
+        }
     }
 
     @Override
